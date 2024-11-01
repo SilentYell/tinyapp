@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/SilentYell/tinyapp/issues"
   },
-  "homepage": "https://github.com/SilentYell/tinyapp#readme"
+  "homepage": "https://github.com/SilentYell/tinyapp#readme",
+  "dependencies": {
+    "express": "^4.21.1"
+  }
 }
