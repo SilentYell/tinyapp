@@ -13,6 +13,14 @@ app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase };
 });
 
+app.get("/urls/:id", (req, res) => {
+  const templateVars = {
+    id: req.params.id,
+    longURL: urlDatabase[req.params.id]
+  };
+  res.render("urls_show", templateVars);
+});http://localhost:8080/urls/b2xVn2
+
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
