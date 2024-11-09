@@ -79,6 +79,10 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
+app.get("/register", (req, res) => {
+  res.render("register");
+});
+
 app.post("/urls/:id", (req, res) => {
   const id = req.params.id;
   const newLongURL = req.body.longURL;
