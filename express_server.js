@@ -3,6 +3,20 @@ const cookieParser = require("cookie-parser");
 const app = express();
 const PORT = 8080;
 
+const users = {
+  userRandomID: {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur",
+  },
+  user2RandomID: {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk",
+  },
+};
+
+
 let generateRandomString = () => {
   const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
   let result = '';
@@ -82,6 +96,21 @@ app.listen(PORT, () => {
 app.get("/register", (req, res) => {
   res.render("register");
 });
+
+app.post("/register", (req, res) => {
+  const userId = generateRandomString();
+  const { email, password } = req.body;
+
+  users[userId] = {
+    id: userId,
+    email: email,
+    password: password,
+  };
+
+  res.cookie("user_id", userId);
+  res.redirect("/urls");
+});
+
 
 app.post("/urls/:id", (req, res) => {
   const id = req.params.id;
