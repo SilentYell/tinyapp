@@ -131,8 +131,17 @@ app.get("/login", (req, res) => {
 
 
 app.post("/login", (req, res) => {
-  const userId = req.cookies["user_id"];
-  res.cookie("user_id", userId);
+  const { email, password } = req.body;
+  const user = getUserByEmail(email);
+
+  if (!user) {
+    return res.status(403).send("No user with that email found.");
+  }
+  if (user.password !== password) {
+    return res.status(403).send("Incorrect password.");
+  }
+
+  res.cookie("user_id", user.id);
   res.redirect("/urls");
 });
 
