@@ -16,6 +16,16 @@ const users = {
   },
 };
 
+const getUserByEmail = (email) => {
+  for (const userId in users) {
+    const user = users[userId];
+    if (user.email === email) {
+      return user;
+    }
+  }
+  return null;
+};
+
 let generateRandomString = () => {
   const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
   let result = '';
@@ -126,6 +136,14 @@ app.post("/logout", (req, res) => {
 app.post("/register", (req, res) => {
   const userId = generateRandomString();
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).send("Error: Email and password cannot be empty.");
+  }
+
+  if (getUserByEmail(email)) {
+    return res.status(400).send("Error: Email is already registered.");
+  }
 
   users[userId] = {
     id: userId,
