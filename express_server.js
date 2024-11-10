@@ -107,6 +107,9 @@ app.post("/urls/:id/delete", (req, res) => {
 // Route to redirect short URL to its long URL
 app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id];
+  if (!longURL) {
+    return res.status(404).send("<h2>Short URL not found. Please check the URL and try again.</h2>")
+  }
   res.redirect(longURL);
 });
 
