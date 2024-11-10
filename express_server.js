@@ -3,19 +3,7 @@ const cookieParser = require("cookie-parser");
 const app = express();
 const PORT = 8080;
 
-// Example user data for demonstration
-const users = {
-  userRandomID: {
-    id: "userRandomID",
-    email: "user@example.com",
-    password: "purple-monkey-dinosaur",
-  },
-  user2RandomID: {
-    id: "user2RandomID",
-    email: "user2@example.com",
-    password: "dishwasher-funk",
-  },
-};
+const users = {};
 
 // Function to get user by email
 const getUserByEmail = (email) => {
@@ -61,6 +49,9 @@ app.get("/", (req, res) => {
 // Route to display the URLs
 app.get("/urls", (req, res) => {
   const userId = req.cookies["user_id"];
+  if (!userId) {
+    return res.redirect("/login");
+  }
   const user = users[userId];
   const templateVars = { user, urls: urlDatabase };
   res.render("urls_index", templateVars);
@@ -68,14 +59,22 @@ app.get("/urls", (req, res) => {
 
 // Route to handle creation of new URL
 app.post("/urls", (req, res) => {
+  const userId = req.cookies["user_id"];
+  if (!userId) {
+    return res.status(403).send("<h2>You must be logged in to shorten URLs.</h2>");
+  }
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
   res.redirect(`/urls/${shortURL}`);
 });
 
+
 // Route to display the form for creating a new URL
 app.get("/urls/new", (req, res) => {
   const userId = req.cookies["user_id"];
+  if (!userId) {
+    return res.redirect("/login");
+  }
   const user = users[userId];
   const templateVars = { user };
   res.render("urls_new", templateVars);
@@ -98,11 +97,6 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-// Route to display a simple "Hello World" page
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
-});
-
 // Route to handle deletion of a URL
 app.post("/urls/:id/delete", (req, res) => {
   const id = req.params.id;
@@ -116,19 +110,6 @@ app.get("/u/:id", (req, res) => {
   res.redirect(longURL);
 });
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
-});
-
-// Route to display the registration form
-app.get("/register", (req, res) => {
-  const userId = req.cookies["user_id"];
-  const user = users[userId];
-  const templateVars = { user };
-  res.render("register", templateVars);
-});
-
 // Route to handle URL update
 app.post("/urls/:id", (req, res) => {
   const id = req.params.id;
@@ -137,9 +118,23 @@ app.post("/urls/:id", (req, res) => {
   res.redirect("/urls");
 });
 
+// Route to display the registration form
+app.get("/register", (req, res) => {
+  const userId = req.cookies["user_id"];
+  if (userId) {
+    return res.redirect("/urls");
+  }
+  const user = users[userId];
+  const templateVars = { user };
+  res.render("register", templateVars);
+});
+
 // Route to display the login form
 app.get("/login", (req, res) => {
   const userId = req.cookies["user_id"];
+  if (userId) {
+    return res.redirect("/urls");
+  }
   const user = users[userId];
   const templateVars = { user };
   res.render("login", templateVars);
@@ -188,4 +183,9 @@ app.post("/register", (req, res) => {
 
   res.cookie("user_id", userId);
   res.redirect("/urls");
+});
+
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}!`);
 });
