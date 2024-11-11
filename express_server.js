@@ -137,13 +137,20 @@ app.get("/urls.json", (req, res) => {
 app.post("/urls/:id/delete", (req, res) => {
   const urlID = req.params.id;
   const userID = req.cookies["user_id"];
+  
+  // Check if the user is logged in
+  if (!userID) {
+    return res.status(401).send("Error: User not logged in");
+  }
+  // Check if URL exists in the database
   if (!urlDatabase[urlID]) {
     return res.status(404).send("Error: URL ID does not exist");
-  } if (!userID) {
-    return res.status(401).send("Error: User not logged in");
-  } if (urlDatabase[urlID].userID !== userID) {
+  }
+  // Check if the user owns the URL
+  if (urlDatabase[urlID].userID !== userID) {
     return res.status(403).send("Error: User does not own the URL");
   }
+
   delete urlDatabase[urlID];
   res.redirect("/urls");
 });
