@@ -3,7 +3,7 @@ const express = require("express");
 const cookieSession = require("cookie-session");
 const app = express();
 const PORT = 8080;
-const { getUserByEmail, generateRandomString } = require('./helpers');
+const { getUserByEmail, generateRandomString, urlsForUser } = require('./helpers');
 
 const users = {};
 
@@ -21,19 +21,8 @@ app.use(
   })
 );
 
-
 // Middleware to parse URL-encoded bodies
 app.use(express.urlencoded({ extended: true }));
-
-const urlsForUser = (id) => {
-  const userUrls = {};
-  for (let url in urlDatabase) {
-    if (urlDatabase[url].userID === id) {
-      userUrls[url] = urlDatabase[url];
-    }
-  }
-  return userUrls;
-};
 
 // Home route
 app.get("/", (req, res) => {
