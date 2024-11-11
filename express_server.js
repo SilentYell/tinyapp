@@ -1,3 +1,4 @@
+const bcrypt = require("bcryptjs");
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const app = express();
@@ -30,16 +31,7 @@ let generateRandomString = () => {
 // Setting EJS as the templating engine
 app.set("view engine", "ejs");
 
-const urlDatabase = {
-  b6UTxQ: {
-    longURL: "https://www.tsn.ca",
-    userID: "aJ48lW",
-  },
-  i3BoGr: {
-    longURL: "https://www.google.ca",
-    userID: "aJ48lW",
-  },
-};
+const urlDatabase = {};
 
 // Middleware to parse cookies
 app.use(cookieParser());
@@ -137,7 +129,7 @@ app.get("/urls.json", (req, res) => {
 app.post("/urls/:id/delete", (req, res) => {
   const urlID = req.params.id;
   const userID = req.cookies["user_id"];
-  
+
   // Check if the user is logged in
   if (!userID) {
     return res.status(401).send("Error: User not logged in");
@@ -221,7 +213,7 @@ app.post("/login", (req, res) => {
     return res.status(403).send("Error: Email not found. Please register first.");
   }
 
-  if (user.password !== password) {
+  if (!bcrypt.compareSync(password, user.password)) {
     // If the password is incorrect
     return res.status(403).send("Error: Incorrect password. Please try again.");
   }
@@ -273,11 +265,14 @@ app.post("/register", (req, res) => {
     return res.status(400).send("Error: Email is already registered.");
   }
 
+  const hashedPassword = bcrypt.hashSync(password, 10);
   users[userId] = {
     id: userId,
     email: email,
-    password: password,
+    password: hashedPassword,
   };
+
+  console.log(users);
 
   res.cookie("user_id", userId);
   res.redirect("/urls");
