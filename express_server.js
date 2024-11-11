@@ -3,30 +3,10 @@ const express = require("express");
 const cookieSession = require("cookie-session");
 const app = express();
 const PORT = 8080;
+const { getUserByEmail, generateRandomString } = require('./helpers');
 
 const users = {};
 
-// Function to get user by email
-const getUserByEmail = (email) => {
-  for (const userId in users) {
-    const user = users[userId];
-    if (user.email === email) {
-      return user;
-    }
-  }
-  return null;
-};
-
-// Function to generate a random string for URLs and user IDs
-let generateRandomString = () => {
-  const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-  let result = '';
-  for (let i = 0; i < 6; i++) {
-    const randomChar = Math.floor(Math.random() * characters.length);
-    result += characters[randomChar];
-  }
-  return result;
-};
 
 // Setting EJS as the templating engine
 app.set("view engine", "ejs");
@@ -37,7 +17,7 @@ const urlDatabase = {};
 app.use(
   cookieSession({
     name: "session",
-    keys: ["your-secret-key"],
+    keys: ["ci5#$RTgL0xcjJdfFDGF78hye8w"],
     maxAge: 24 * 60 * 60 * 1000,
   })
 );
