@@ -7,7 +7,6 @@ const { getUserByEmail, generateRandomString } = require('./helpers');
 
 const users = {};
 
-
 // Setting EJS as the templating engine
 app.set("view engine", "ejs");
 

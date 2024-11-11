@@ -1,12 +1,13 @@
+
 // Function to get user by email
-const getUserByEmail = (email) => {
+const getUserByEmail = (email, users) => {
   for (const userId in users) {
     const user = users[userId];
     if (user.email === email) {
       return user;
     }
   }
-  return null;
+  return undefined;
 };
 
 // Function to generate a random string for URLs and user IDs
@@ -19,7 +20,6 @@ let generateRandomString = () => {
   }
   return result;
 };
-
 
 module.exports = {
   getUserByEmail,
