@@ -204,6 +204,27 @@ app.get("/login", (req, res) => {
   res.render("login", templateVars);
 });
 
+// Route to handle login form submission
+app.post("/login", (req, res) => {
+  const { email, password } = req.body;
+  const user = getUserByEmail(email);
+
+  if (!user) {
+    // If no user with the provided email exists
+    return res.status(403).send("Error: Email not found. Please register first.");
+  }
+
+  if (user.password !== password) {
+    // If the password is incorrect
+    return res.status(403).send("Error: Incorrect password. Please try again.");
+  }
+
+  // If login is successful, set a cookie and redirect
+  res.cookie("user_id", user.id);
+  res.redirect("/urls");
+});
+
+
 // Route to handle login
 app.post("/urls", (req, res) => {
   const userId = req.cookies["user_id"];
