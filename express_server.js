@@ -5,11 +5,11 @@ const app = express();
 const PORT = 8080;
 const { getUserByEmail, generateRandomString, urlsForUser } = require('./helpers');
 
-const users = {};
-
 // Setting EJS as the templating engine
 app.set("view engine", "ejs");
 
+// Users and URL database objects
+const users = {};
 const urlDatabase = {};
 
 // Middleware to encrypt the session
@@ -24,7 +24,7 @@ app.use(
 // Middleware to parse URL-encoded bodies
 app.use(express.urlencoded({ extended: true }));
 
-// Home route
+// Route for root. Redirects based on login status
 app.get("/", (req, res) => {
   if (req.session.user_id) {
     // If the user is logged in, redirect to /urls
@@ -35,16 +35,18 @@ app.get("/", (req, res) => {
   }
 });
 
-// Route to display the URLs
+// Route to display all URLs for a logged-in user
 app.get("/urls", (req, res) => {
   const userId = req.session.user_id;
-  if (!userId) {
-    return res.status(403).send("<h2>Please log in or register to view URLs</h2>");
-  }
   const user = users[userId];
-  const templateVars = { user, urls: urlsForUser(userId, urlDatabase) };
-  res.render("urls_index", templateVars);
+  // Render the page with user and URLs data (or an empty object if not logged in)
+  const templateVars = {
+    user,
+    urls: user ? urlsForUser(userId, urlDatabase) : urlDatabase // Show only the user's URLs if logged in, or all URLs if not
+  };
+  res.render("urls_index", templateVars); // Render the same page regardless of login status
 });
+
 
 
 // Route to handle creation of new URL
@@ -63,6 +65,7 @@ app.post("/urls", (req, res) => {
 app.get("/urls/new", (req, res) => {
   const userId = req.session.user_id;
   if (!userId) {
+    // Redirect if not logged in
     return res.redirect("/login");
   }
   const user = users[userId];
@@ -74,7 +77,6 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   const userId = req.session.user_id;
   const id = req.params.id;
-  console.log("Request for short URL ID:", id);
 
   if (!userId) {
     return res.status(403).send("<h2>Log in to view this URL</h2>");
@@ -82,7 +84,6 @@ app.get("/urls/:id", (req, res) => {
 
   const user = users[userId];
   const url = urlDatabase[id];
-  console.log("Retrieved URL data:", url);
 
   if (!url) {
     return res.status(404).send("<h2>URL not found</h2>");
@@ -98,8 +99,6 @@ app.get("/urls/:id", (req, res) => {
   };
   res.render("urls_show", templateVars);
 });
-
-
 
 // Route to return URL database as JSON
 app.get("/urls.json", (req, res) => {
@@ -159,8 +158,6 @@ app.post("/urls/:id", (req, res) => {
 
   // Proceed with updating the URL
   urlDatabase[urlID].longURL = req.body.longURL;
-  console.log("Updated URL database:", urlDatabase);
-
   res.redirect("/urls");
 });
 
@@ -216,15 +213,8 @@ app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
   const longURL = req.body.longURL;
 
-  // Log to check values
-  console.log("New short URL created:", shortURL);
-  console.log("Long URL:", longURL);
-  console.log("User ID:", userId);
-
   // Save to database
   urlDatabase[shortURL] = { longURL: longURL, userID: userId };
-  console.log("Updated urlDatabase:", urlDatabase);
-
   res.redirect(`/urls/${shortURL}`);
 });
 

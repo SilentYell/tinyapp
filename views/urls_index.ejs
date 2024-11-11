@@ -20,34 +20,58 @@
     <%- include('partials/_header') %>
     <main style="margin: 1em;">
       <h3>My URLs</h3>
+      
+      <!-- Alert for non-logged-in users to log in or register -->
+      <% if (!user) { %>
+        <div class="alert alert-warning" role="alert">
+          Please <a href="/login" class="alert-link">log in</a> or 
+          <a href="/register" class="alert-link">register</a> to create a new short URL.
+        </div>
+      <% } %>
+
       <table class="table">
         <thead>
           <tr>
             <th scope="col">Short URL ID</th>
             <th scope="col">Long URL</th>
-            <th scope="col">Edit</th>
-            <th scope="col">Remove</th>
+            <% if (user) { %> <!-- Only show Edit/Remove columns for logged-in users -->
+              <th scope="col">Edit</th>
+              <th scope="col">Remove</th>
+            <% } %>
           </tr>
         </thead>
         <tbody>
-          <% for (let id in urls) { %>
+          <% for (let id in urls) { %> <!-- Display URLs to all users -->
             <tr>
               <td><%= id %></td>
               <td><a href="<%= urls[id].longURL %>"><%= urls[id].longURL %></a></td>
-              <td>
-                <a href="/urls/<%= id %>" class="btn btn-warning">Edit</a>
-            </td>
-            <td>
-                <!-- Form to delete this specific URL -->
-                <form method="POST" action="/urls/<%= id %>/delete">
-                  <button type="submit" class="btn btn-danger">Delete</button>
-                </form>
-              </td>
+              
+              <!-- Edit/Remove options only for logged-in users -->
+              <% if (user) { %>
+                <td>
+                  <a href="/urls/<%= id %>" class="btn btn-warning">Edit</a>
+                </td>
+                <td>
+                  <!-- Form to delete this specific URL -->
+                  <form method="POST" action="/urls/<%= id %>/delete">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                  </form>
+                </td>
+              <% } %>
             </tr>
           <% } %>
         </tbody>
       </table>
+
+      <!-- Prompt to create new URL for logged-in users -->
+      <% if (user) { %>
+        <div class="alert alert-info" role="alert">
+          Create a <a href="/urls/new" class="alert-info"><b>New Short URL</b></a>
+        </div>
+      <% } %>
+      
     </main>
+    
     <!-- Bootstrap JS -->
     <script
       src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
