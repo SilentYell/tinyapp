@@ -26,7 +26,13 @@ app.use(express.urlencoded({ extended: true }));
 
 // Home route
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  if (req.session.user_id) {
+    // If the user is logged in, redirect to /urls
+    res.redirect("/urls");
+  } else {
+    // If the user is not logged in, redirect to /login
+    res.redirect("/login");
+  }
 });
 
 // Route to display the URLs
@@ -36,7 +42,7 @@ app.get("/urls", (req, res) => {
     return res.status(403).send("<h2>Please log in or register to view URLs</h2>");
   }
   const user = users[userId];
-  const templateVars = { user, urls: urlsForUser(userId) };
+  const templateVars = { user, urls: urlsForUser(userId, urlDatabase) };
   res.render("urls_index", templateVars);
 });
 
@@ -153,6 +159,8 @@ app.post("/urls/:id", (req, res) => {
 
   // Proceed with updating the URL
   urlDatabase[urlID].longURL = req.body.longURL;
+  console.log("Updated URL database:", urlDatabase);
+
   res.redirect("/urls");
 });
 
