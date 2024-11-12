@@ -17,6 +17,14 @@
   
   <div class="container">
     <h2>Login</h2>
+    
+    <!-- Error Alert -->
+    <% if (error) { %>
+      <div class="alert alert-danger" role="alert">
+        <%= error %>
+      </div>
+    <% } %>
+  
     <!-- Login Form -->
     <form method="POST" action="/login">
       <div class="form-group">
@@ -30,5 +38,6 @@
       <button type="submit" class="btn btn-primary">Login</button>
     </form>
   </div>
+  
 </body>
 </html>

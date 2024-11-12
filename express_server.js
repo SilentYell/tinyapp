@@ -76,27 +76,20 @@ app.get("/urls/new", (req, res) => {
 // Route to display a specific URL and its details
 app.get("/urls/:id", (req, res) => {
   const userId = req.session.user_id;
-  const id = req.params.id;
-
-  if (!userId) {
-    return res.status(403).send("<h2>Log in to view this URL</h2>");
-  }
-
-  const user = users[userId];
-  const url = urlDatabase[id];
+  const urlId = req.params.id;
+  const url = urlDatabase[urlId];
 
   if (!url) {
-    return res.status(404).send("<h2>URL not found</h2>");
-  }
-  if (url.userID !== userId) {
-    return res.status(403).send("<h2>You do not have permission to view this URL</h2>");
+    const templateVars = { user: users[userId], urls: urlDatabase, error: "URL not found." };
+    return res.render("urls_index", templateVars);
   }
 
-  const templateVars = {
-    user,
-    id: id,
-    longURL: url.longURL
-  };
+  if (!userId || url.userID !== userId) {
+    const templateVars = { user: users[userId], urls: urlDatabase, error: "You do not have permission to view this URL." };
+    return res.render("urls_index", templateVars);
+  }
+
+  const templateVars = { user: users[userId], id: urlId, longURL: url.longURL, error: null };
   res.render("urls_show", templateVars);
 });
 
@@ -110,17 +103,19 @@ app.post("/urls/:id/delete", (req, res) => {
   const urlID = req.params.id;
   const userID = req.session.user_id;
 
-  // Check if the user is logged in
   if (!userID) {
-    return res.status(401).send("Error: User not logged in");
+    const templateVars = { user: null, urls: urlDatabase, error: "Please log in to delete URLs." };
+    return res.render("urls_index", templateVars);
   }
-  // Check if URL exists in the database
+
   if (!urlDatabase[urlID]) {
-    return res.status(404).send("Error: URL ID does not exist");
+    const templateVars = { user: users[userID], urls: urlDatabase, error: "URL ID does not exist." };
+    return res.render("urls_index", templateVars);
   }
-  // Check if the user owns the URL
+
   if (urlDatabase[urlID].userID !== userID) {
-    return res.status(403).send("Error: User does not own the URL");
+    const templateVars = { user: users[userID], urls: urlDatabase, error: "You do not have permission to delete this URL." };
+    return res.render("urls_index", templateVars);
   }
 
   delete urlDatabase[urlID];
@@ -167,8 +162,7 @@ app.get("/register", (req, res) => {
   if (userId) {
     return res.redirect("/urls");
   }
-  const user = users[userId];
-  const templateVars = { user };
+  const templateVars = { user: users[userId], error: null }; // Set error to null by default
   res.render("register", templateVars);
 });
 
@@ -178,27 +172,29 @@ app.get("/login", (req, res) => {
   if (userId) {
     return res.redirect("/urls");
   }
-  const user = users[userId];
-  const templateVars = { user };
+  const templateVars = { user: users[userId], error: null };
   res.render("login", templateVars);
 });
+
 
 // Route to handle login form submission
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
-  const user = getUserByEmail(email);
+  const user = getUserByEmail(email, users);
 
   if (!user) {
     // If no user with the provided email exists
-    return res.status(403).send("Error: Email not found. Please register first.");
+    const templateVars = { user: null, error: "Error: Email not found. Please register first." };
+    return res.status(403).render("login", templateVars); // Render the login page with error
   }
 
   if (!bcrypt.compareSync(password, user.password)) {
     // If the password is incorrect
-    return res.status(403).send("Error: Incorrect password. Please try again.");
+    const templateVars = { user: null, error: "Error: Incorrect password. Please try again." };
+    return res.status(403).render("login", templateVars); // Render the login page with error
   }
 
-  // If login is successful, set a cookie and redirect
+  // Successful login: Set session and redirect to /urls
   req.session.user_id = user.id;
   res.redirect("/urls");
 });
@@ -227,27 +223,33 @@ app.post("/logout", (req, res) => {
 
 // Route to handle user registration
 app.post("/register", (req, res) => {
-  const userId = generateRandomString();
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(400).send("Error: Email and password cannot be empty.");
+    // If email or password is missing
+    const templateVars = { user: null, error: "Error: Email and password cannot be empty." };
+    // Render registration page with error
+    return res.status(400).render("register", templateVars);
   }
 
-  if (getUserByEmail(email)) {
-    return res.status(400).send("Error: Email is already registered.");
+  if (getUserByEmail(email, users)) {
+    // If the email is already registered
+    const templateVars = { user: null, error: "Error: Email is already registered." };
+    // Render registration page with error
+    return res.status(400).render("register", templateVars);
   }
 
+  // Proceed with registration
+  const userId = generateRandomString();
   const hashedPassword = bcrypt.hashSync(password, 10);
-  users[userId] = {
-    id: userId,
-    email: email,
-    password: hashedPassword,
-  };
+  users[userId] = { id: userId, email, password: hashedPassword };
 
+  // Set session cookie and redirect to /urls
   req.session.user_id = userId;
   res.redirect("/urls");
 });
+
+
 
 // Start the server
 app.listen(PORT, () => {

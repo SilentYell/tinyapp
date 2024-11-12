@@ -17,15 +17,23 @@
   
   <div class="container">
     <h2>Register</h2>
+
+    <!-- Error Alert -->
+    <% if (error) { %>
+      <div class="alert alert-danger" role="alert">
+        <%= error %>
+      </div>
+    <% } %>
+    
     <!-- Registration Form -->
     <form method="POST" action="/register">
       <div class="form-group">
         <label for="email">Email:</label>
-        <input type="email" name="email" id="email" class="form-control" required>
+        <input type="email" name="email" id="email" placeholder="Enter Email" style="width: 400px" class="form-control" required>
       </div>
       <div class="form-group">
         <label for="password">Password:</label>
-        <input type="password" name="password" id="password" class="form-control" required>
+        <input type="password" name="password" id="password" placeholder="Password" style="width: 400px" class="form-control" required>
       </div>
       <button type="submit" class="btn btn-primary">Register</button>
     </form>
