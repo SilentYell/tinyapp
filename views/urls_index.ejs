@@ -20,7 +20,6 @@
     <%- include('partials/_header') %>
     <main style="margin: 1em;">
       <h3>My URLs</h3>
-      
       <!-- Alert for non-logged-in users to log in or register -->
       <% if (!user) { %>
         <div class="alert alert-warning" role="alert">
@@ -34,18 +33,19 @@
           <tr>
             <th scope="col">Short URL ID</th>
             <th scope="col">Long URL</th>
-            <% if (user) { %> <!-- Only show Edit/Remove columns for logged-in users -->
+            <!-- Only show Edit/Remove columns for logged-in users -->
+            <% if (user) { %>
               <th scope="col">Edit</th>
               <th scope="col">Remove</th>
             <% } %>
           </tr>
         </thead>
         <tbody>
-          <% for (let id in urls) { %> <!-- Display URLs to all users -->
+          <!-- Display URLs to all users -->
+          <% for (let id in urls) { %>
             <tr>
               <td><%= id %></td>
               <td><a href="<%= urls[id].longURL %>"><%= urls[id].longURL %></a></td>
-              
               <!-- Edit/Remove options only for logged-in users -->
               <% if (user) { %>
                 <td>
@@ -62,7 +62,6 @@
           <% } %>
         </tbody>
       </table>
-
       <!-- Prompt to create new URL for logged-in users -->
       <% if (user) { %>
         <div class="alert alert-info" role="alert">

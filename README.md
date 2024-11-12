@@ -25,6 +25,14 @@ TinyApp is a full stack web application that allows users to shorten long URLs (
 
 !["Screenshot of URLs page with user logged in"](https://github.com/SilentYell/tinyapp/blob/main/docs/url_edit_logged_in.jpeg?raw=true)
 
+*Tiny URL creation page where user is logged in*
+
+!["Screenshot of TinyURL creation page with user logged in"](/docs/TinyURLCreation_page.jpeg)
+
+*Long URL edit page where user is logged in*
+
+!["Screenshot of long URL edit page with user logged in"](/docs/url_edit_logged_in.jpeg)
+
 
 ## Dependencies
 

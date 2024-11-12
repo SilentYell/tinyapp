@@ -23,15 +23,9 @@
         </p>
 
         <form method="POST" action="/urls/<%= id %>">
-          <div class="form-group">
-            <label for="longURL">Edit Long URL:</label>
-            <input
-              type="text"
-              class="form-control"
-              id="longURL"
-              name="longURL"
-              value="<%= longURL %>"
-            />
+          <div class="form-group" style="display: flex; justify-content: center; align-items: center;">
+            <label for="longURL" style=margin-right:10px;>Edit Long URL:</label>
+            <input type="text" style="width: 400px" class="form-control" id="longURL" name="longURL" value="<%= longURL %>"/>
           </div>
           <button type="submit" class="btn btn-primary">Update URL</button>
         </form>
