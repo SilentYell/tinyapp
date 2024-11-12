@@ -76,32 +76,33 @@ app.get("/urls/new", (req, res) => {
 
 // Route to display a specific URL and its details
 app.get("/urls/:id", (req, res) => {
-  const userId = req.session.user_id;
-  const urlId = req.params.id;
-  const url = urlDatabase[urlId];
+  const userId = req.session.user_id; // ID of the logged-in user
+  const urlId = req.params.id; // ID of the URL being accessed
+  const url = urlDatabase[urlId]; // Retrieve URL details from the database
 
-  // If the URL does not exist
+  // Check if the URL exists in the database
   if (!url) {
-    const templateVars = { user: users[userId], urls: urlDatabase, error: "Error: URL not found." };
-    return res.render("urls_index", templateVars);
+    const templateVars = { user: users[userId], urls: {}, error: "Error: URL not found." };
+    return res.status(404).render("urls_index", templateVars);
   }
 
-  // If user is not logged in
+  // Check if user is not logged in
   if (!userId) {
-    const templateVars = { user: null, urls: urlDatabase, error: "Error: Please log in to view URL details." };
-    return res.render("urls_index", templateVars);
+    const templateVars = { user: null, urls: {}, error: "Error: Please log in to view URL details." };
+    return res.status(403).render("urls_index", templateVars);
   }
 
-  // If the logged-in user does not own the URL
+  // Check if the logged-in user does not own the URL
   if (url.userID !== userId) {
-    const templateVars = { user: users[userId], urls: urlDatabase, error: "Error: You do not have permission to view this URL." };
-    return res.render("urls_index", templateVars);
+    const templateVars = { user: users[userId], urls: {}, error: "Error: You do not have permission to view this URL." };
+    return res.status(403).render("urls_index", templateVars);
   }
 
-  // If all conditions pass, render the URL details for the owner
-  const templateVars = { user: users[userId], id: urlId, longURL: url.longURL, error: null };
+  // If all checks pass, render the URL details for the owner
+  const templateVars = { user: users[userId], id: urlId, longURL: url.longURL };
   res.render("urls_show", templateVars);
 });
+
 
 // Route to handle deletion of a URL
 app.post("/urls/:id/delete", (req, res) => {

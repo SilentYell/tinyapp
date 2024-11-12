@@ -17,18 +17,26 @@
     <div class="card text-center">
       <div class="card-header"></div>
       <div class="card-body">
-        <h5 class="card-title">TinyURL for: <%= longURL %></h5>
-        <p class="card-text">
-          Short URL ID: <a href="/u/<%= id %>"><%= id %></a>
-        </p>
 
-        <form method="POST" action="/urls/<%= id %>">
-          <div class="form-group" style="display: flex; justify-content: center; align-items: center;">
-            <label for="longURL" style=margin-right:10px;>Edit Long URL:</label>
-            <input type="text" style="width: 400px" class="form-control" id="longURL" name="longURL" value="<%= longURL %>"/>
-          </div>
-          <button type="submit" class="btn btn-primary">Update URL</button>
-        </form>
+        <% if (longURL) { %>
+          <!-- Display URL details if authorized -->
+          <h5 class="card-title">TinyURL for: <%= longURL %></h5>
+          <p class="card-text">
+            Short URL ID: <a href="/u/<%= id %>"><%= id %></a>
+          </p>
+
+          <form method="POST" action="/urls/<%= id %>">
+            <div class="form-group" style="display: flex; justify-content: center; align-items: center;">
+              <label for="longURL" style=margin-right:10px;>Edit Long URL:</label>
+              <input type="text" style="width: 400px" class="form-control" id="longURL" name="longURL" value="<%= longURL %>"/>
+            </div>
+            <button type="submit" class="btn btn-primary">Update URL</button>
+          </form>
+
+        <% } else { %>
+          <!-- Display error message if unauthorized -->
+          <p class="alert alert-danger">Error: You do not have permission to view this URL.</p>
+        <% } %>
 
       </div>
       <div class="card-footer text-muted"></div>
