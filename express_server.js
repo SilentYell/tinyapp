@@ -39,12 +39,13 @@ app.get("/", (req, res) => {
 app.get("/urls", (req, res) => {
   const userId = req.session.user_id;
   const user = users[userId];
-  // Render the page with user and URLs data (or an empty object if not logged in)
+  // Render the page with user, URLs data, and error set to null by default
   const templateVars = {
     user,
-    urls: user ? urlsForUser(userId, urlDatabase) : urlDatabase // Show only the user's URLs if logged in, or all URLs if not
+    urls: user ? urlsForUser(userId, urlDatabase) : urlDatabase,
+    error: null
   };
-  res.render("urls_index", templateVars); // Render the same page regardless of login status
+  res.render("urls_index", templateVars);
 });
 
 
@@ -79,23 +80,27 @@ app.get("/urls/:id", (req, res) => {
   const urlId = req.params.id;
   const url = urlDatabase[urlId];
 
+  // If the URL does not exist
   if (!url) {
-    const templateVars = { user: users[userId], urls: urlDatabase, error: "URL not found." };
+    const templateVars = { user: users[userId], urls: urlDatabase, error: "Error: URL not found." };
     return res.render("urls_index", templateVars);
   }
 
-  if (!userId || url.userID !== userId) {
-    const templateVars = { user: users[userId], urls: urlDatabase, error: "You do not have permission to view this URL." };
+  // If user is not logged in
+  if (!userId) {
+    const templateVars = { user: null, urls: urlDatabase, error: "Error: Please log in to view URL details." };
     return res.render("urls_index", templateVars);
   }
 
+  // If the logged-in user does not own the URL
+  if (url.userID !== userId) {
+    const templateVars = { user: users[userId], urls: urlDatabase, error: "Error: You do not have permission to view this URL." };
+    return res.render("urls_index", templateVars);
+  }
+
+  // If all conditions pass, render the URL details for the owner
   const templateVars = { user: users[userId], id: urlId, longURL: url.longURL, error: null };
   res.render("urls_show", templateVars);
-});
-
-// Route to return URL database as JSON
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
 });
 
 // Route to handle deletion of a URL

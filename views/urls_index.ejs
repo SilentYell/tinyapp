@@ -20,6 +20,13 @@
     <%- include('partials/_header') %>
     <main style="margin: 1em;">
       <h3>My URLs</h3>
+      <!-- Error Alert -->
+      <% if (error) { %>
+        <div class="alert alert-danger" role="alert">
+          <%= error %>
+        </div>
+      <% } %>
+
       <!-- Alert for non-logged-in users to log in or register -->
       <% if (!user) { %>
         <div class="alert alert-warning" role="alert">
