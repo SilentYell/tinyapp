@@ -4,25 +4,26 @@ TinyApp is a full stack web application that allows users to shorten long URLs (
 
 ## Final Product
 
-*Main page without an active user*
 
-!["Screenshot of login page"](/docs/login_page.jpeg)
+*Main URL page with an active user, displaying created links*
 
-*Main page with an active user, displaying created links*
+!["Screenshot of URLs page with user logged in"](https://github.com/SilentYell/tinyapp/blob/main/docs/main_page_logged_in_with_links.jpeg?raw=true)
 
-!["Screenshot of URLs page with user logged in"](/docs/main_page_logged_in_with_links.jpeg)
+*Main URL page when there is no active user, displaying created links by other users*
+
+!["Screenshot of URLs page with no user logged in"](https://github.com/SilentYell/tinyapp/blob/main/docs/main_page_not_logged_in.jpeg?raw=true)
 
 *Registration page*
 
-!["Screenshot of register page"](/docs/registration_page.jpeg)
+!["Screenshot of register page"](https://github.com/SilentYell/tinyapp/blob/main/docs/registration_page.jpeg?raw=true)
+
+*Login page without an active user*
+
+!["Screenshot of login page"](https://github.com/SilentYell/tinyapp/blob/main/docs/login_page.jpeg?raw=true)
 
 *Specific short URL page where user owns the short URL*
 
-!["Screenshot of URLs page with user logged in"](/docs/url_edit_logged_in.jpeg)
-
-*Specific short URL page when there is no active user*
-
-!["Screenshot of URLs page with no user logged in"](/docs/main_page_not_logged_in.jpeg)
+!["Screenshot of URLs page with user logged in"](https://github.com/SilentYell/tinyapp/blob/main/docs/url_edit_logged_in.jpeg?raw=true)
 
 
 ## Dependencies
