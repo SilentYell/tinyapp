@@ -31,7 +31,7 @@ TinyApp is a full stack web application that allows users to shorten long URLs (
 
 *Unauthorized URL viewing page*
 
-!["Screenshot of specific URL page as without being the URL owner"](/home/labber/lighthouse/tinyapp/docs/unauthorized_URL_viewing.jpeg)
+!["Screenshot of specific URL page as without being the URL owner"](https://github.com/SilentYell/tinyapp/blob/main/docs/unauthorized_URL_viewing.jpeg?raw=true)
 
 ## Dependencies
 
