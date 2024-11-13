@@ -39,10 +39,14 @@ app.get("/", (req, res) => {
 app.get("/urls", (req, res) => {
   const userId = req.session.user_id;
   const user = users[userId];
-  // Render the page with user, URLs data, and error set to null by default
+
+  // Use urlsForUser to get only the URLs created by the logged-in user
+  const userUrls = urlsForUser(userId, urlDatabase);
+
   const templateVars = {
     user,
-    urls: user ? urlsForUser(userId, urlDatabase) : urlDatabase,
+    // Only the logged-in user's URLs will be displayed
+    urls: userUrls,
     error: null
   };
   res.render("urls_index", templateVars);
